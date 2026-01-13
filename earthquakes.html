@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.553">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Tomas Hurdzan">
+<meta name="dcterms.date" content="2026-01-11">
+
+<title>Data science project</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="earthquakes_files/libs/clipboard/clipboard.min.js"></script>
+<script src="earthquakes_files/libs/quarto-html/quarto.js"></script>
+<script src="earthquakes_files/libs/quarto-html/popper.min.js"></script>
+<script src="earthquakes_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="earthquakes_files/libs/quarto-html/anchor.min.js"></script>
+<link href="earthquakes_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="earthquakes_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="earthquakes_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="earthquakes_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="earthquakes_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">1</span> Introduction</a>
+  <ul class="collapse">
+  <li><a href="#research-questions" id="toc-research-questions" class="nav-link" data-scroll-target="#research-questions"><span class="header-section-number">1.1</span> Research questions</a></li>
+  <li><a href="#planned-steps" id="toc-planned-steps" class="nav-link" data-scroll-target="#planned-steps"><span class="header-section-number">1.2</span> Planned steps</a></li>
+  </ul></li>
+  <li><a href="#data-understanding-and-filtering" id="toc-data-understanding-and-filtering" class="nav-link" data-scroll-target="#data-understanding-and-filtering"><span class="header-section-number">2</span> Data understanding and filtering</a>
+  <ul class="collapse">
+  <li><a href="#filtering-the-data" id="toc-filtering-the-data" class="nav-link" data-scroll-target="#filtering-the-data"><span class="header-section-number">2.1</span> Filtering the data</a></li>
+  </ul></li>
+  <li><a href="#exploring-the-data" id="toc-exploring-the-data" class="nav-link" data-scroll-target="#exploring-the-data"><span class="header-section-number">3</span> Exploring the data</a></li>
+  <li><a href="#tsunami-analysis" id="toc-tsunami-analysis" class="nav-link" data-scroll-target="#tsunami-analysis"><span class="header-section-number">4</span> Tsunami analysis</a></li>
+  <li><a href="#tsunami-prediction" id="toc-tsunami-prediction" class="nav-link" data-scroll-target="#tsunami-prediction"><span class="header-section-number">5</span> Tsunami prediction</a>
+  <ul class="collapse">
+  <li><a href="#theory-of-hypotheses-testing-recap" id="toc-theory-of-hypotheses-testing-recap" class="nav-link" data-scroll-target="#theory-of-hypotheses-testing-recap"><span class="header-section-number">5.1</span> Theory of hypotheses testing recap</a></li>
+  <li><a href="#application-to-our-example" id="toc-application-to-our-example" class="nav-link" data-scroll-target="#application-to-our-example"><span class="header-section-number">5.2</span> Application to our example</a></li>
+  </ul></li>
+  <li><a href="#evaluation" id="toc-evaluation" class="nav-link" data-scroll-target="#evaluation"><span class="header-section-number">6</span> Evaluation</a>
+  <ul class="collapse">
+  <li><a href="#discussion-of-evaluation-results" id="toc-discussion-of-evaluation-results" class="nav-link" data-scroll-target="#discussion-of-evaluation-results"><span class="header-section-number">6.1</span> Discussion of evaluation results</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">7</span> Conclusion</a>
+  <ul class="collapse">
+  <li><a href="#future-work" id="toc-future-work" class="nav-link" data-scroll-target="#future-work"><span class="header-section-number">7.1</span> Future work</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Data science project</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Tomas Hurdzan </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">January 11, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Introduction</h1>
+<p>In this project, we analyze a large global earthquake dataset containing seismic events recorded between 1990 and 2023.</p>
+<section id="research-questions" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="research-questions"><span class="header-section-number">1.1</span> Research questions</h2>
+<p>This project addresses the following specific research questions:</p>
+<ol type="1">
+<li><strong>Where</strong> (geographically) are earthquakes most frequent in the dataset, and how do tsunami events distribute spatially?<br>
+</li>
+<li><strong>Which earthquake attributes (magnitude, depth, location) are most informative for detecting tsunami-generating events?</strong><br>
+</li>
+<li><strong>Can a simple, operational classifier produce reliable tsunami warnings</strong>, i.e., reach a pre-specified detection target (recall ≥ 0.90) while keeping false alarms at an acceptable level?<br>
+</li>
+<li><strong>How much predictive value do machine-learning models add over a simple magnitude threshold baseline?</strong></li>
+</ol>
+</section>
+<section id="planned-steps" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="planned-steps"><span class="header-section-number">1.2</span> Planned steps</h2>
+<p>To answer the research questions we follow an explicit plan:</p>
+<ol type="1">
+<li><strong>Data preparation</strong> — ingest the global earthquake dataset and do some basic correction of the dataset.</li>
+<li><strong>Exploratory analysis</strong> — compute summary statistics, temporal and spatial plots, and derive an initial list of candidate predictive features.</li>
+<li><strong>Modeling</strong> — implement a simple rule baseline (magnitude threshold), logistic regression, and MLP. Select decision thresholds on the validation set from the precision–recall curve to guarantee the target recall.</li>
+<li><strong>Evaluation</strong> — apply the fixed thresholds to the test set and report confusion matrices, precision, recall, F1, PR-AUC, and operational statistics (missed events, false alarms/year).</li>
+<li><strong>Conclusion</strong> — interpret results, discuss limitations, and propose future work.</li>
+</ol>
+</section>
+</section>
+<section id="data-understanding-and-filtering" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Data understanding and filtering</h1>
+<p>Dataset consists of more than 3 milion rows of data. The columns describing the data are:</p>
+<ul>
+<li>time (unix timestamp in miliseconds)</li>
+<li>place where it happened (nearest city)</li>
+<li>status (reviewed, automatic, manual)</li>
+<li>tsunami (binary indicator if tsunami was created)</li>
+<li>significance (integer, denotes the importance or impact level of the event)</li>
+<li>data type (earthquake, quarry blast, explosion, …)</li>
+<li>magnitude (Moment magnitude scale)</li>
+<li>state</li>
+<li>longitude</li>
+<li>latitude</li>
+<li>depth</li>
+<li>date</li>
+</ul>
+<div id="c20f56c3" class="cell" data-execution_count="89">
+<div class="cell-output cell-output-stdout">
+<pre><code>Data count: 3445751
+Columns: 12
+
+
+For example we now plot the first 10 rows of dataset:</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="89">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">time</th>
+<th data-quarto-table-cell-role="th">place</th>
+<th data-quarto-table-cell-role="th">status</th>
+<th data-quarto-table-cell-role="th">tsunami</th>
+<th data-quarto-table-cell-role="th">significance</th>
+<th data-quarto-table-cell-role="th">data_type</th>
+<th data-quarto-table-cell-role="th">magnitudo</th>
+<th data-quarto-table-cell-role="th">state</th>
+<th data-quarto-table-cell-role="th">longitude</th>
+<th data-quarto-table-cell-role="th">latitude</th>
+<th data-quarto-table-cell-role="th">depth</th>
+<th data-quarto-table-cell-role="th">date</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>631153353990</td>
+<td>12 km NNW of Meadow Lakes, Alaska</td>
+<td>reviewed</td>
+<td>0</td>
+<td>96</td>
+<td>earthquake</td>
+<td>2.50</td>
+<td>Alaska</td>
+<td>-149.669200</td>
+<td>61.730200</td>
+<td>30.100</td>
+<td>1990-01-01 00:22:33.990000+00:00</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>631153491210</td>
+<td>14 km S of Volcano, Hawaii</td>
+<td>reviewed</td>
+<td>0</td>
+<td>31</td>
+<td>earthquake</td>
+<td>1.41</td>
+<td>Hawaii</td>
+<td>-155.212333</td>
+<td>19.317667</td>
+<td>6.585</td>
+<td>1990-01-01 00:24:51.210000+00:00</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>631154083450</td>
+<td>7 km W of Cobb, California</td>
+<td>reviewed</td>
+<td>0</td>
+<td>19</td>
+<td>earthquake</td>
+<td>1.11</td>
+<td>California</td>
+<td>-122.806167</td>
+<td>38.821000</td>
+<td>3.220</td>
+<td>1990-01-01 00:34:43.450000+00:00</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>631155512130</td>
+<td>11 km E of Mammoth Lakes, California</td>
+<td>reviewed</td>
+<td>0</td>
+<td>15</td>
+<td>earthquake</td>
+<td>0.98</td>
+<td>California</td>
+<td>-118.846333</td>
+<td>37.664333</td>
+<td>-0.584</td>
+<td>1990-01-01 00:58:32.130000+00:00</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>631155824490</td>
+<td>16km N of Fillmore, CA</td>
+<td>reviewed</td>
+<td>0</td>
+<td>134</td>
+<td>earthquake</td>
+<td>2.95</td>
+<td>California</td>
+<td>-118.934000</td>
+<td>34.546000</td>
+<td>16.122</td>
+<td>1990-01-01 01:03:44.490000+00:00</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">5</td>
+<td>631155853760</td>
+<td>16km N of Fillmore, CA</td>
+<td>reviewed</td>
+<td>0</td>
+<td>118</td>
+<td>earthquake</td>
+<td>2.77</td>
+<td>California</td>
+<td>-118.923000</td>
+<td>34.543000</td>
+<td>16.342</td>
+<td>1990-01-01 01:04:13.760000+00:00</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">6</td>
+<td>631156030570</td>
+<td>6 km WSW of Mammoth Lakes, California</td>
+<td>reviewed</td>
+<td>0</td>
+<td>20</td>
+<td>earthquake</td>
+<td>1.13</td>
+<td>California</td>
+<td>-119.040000</td>
+<td>37.632667</td>
+<td>-1.499</td>
+<td>1990-01-01 01:07:10.570000+00:00</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">7</td>
+<td>631156431950</td>
+<td>12 km E of Mammoth Lakes, California</td>
+<td>reviewed</td>
+<td>0</td>
+<td>11</td>
+<td>earthquake</td>
+<td>0.83</td>
+<td>California</td>
+<td>-118.834167</td>
+<td>37.661500</td>
+<td>0.556</td>
+<td>1990-01-01 01:13:51.950000+00:00</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">8</td>
+<td>631156614070</td>
+<td>11 km E of Mammoth Lakes, California</td>
+<td>reviewed</td>
+<td>0</td>
+<td>39</td>
+<td>earthquake</td>
+<td>1.59</td>
+<td>California</td>
+<td>-118.840167</td>
+<td>37.662333</td>
+<td>-0.234</td>
+<td>1990-01-01 01:16:54.070000+00:00</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">9</td>
+<td>631156620210</td>
+<td>1 km W of Wilkeson, Washington</td>
+<td>reviewed</td>
+<td>0</td>
+<td>74</td>
+<td>earthquake</td>
+<td>2.20</td>
+<td>Washington</td>
+<td>-122.071167</td>
+<td>47.102500</td>
+<td>8.382</td>
+<td>1990-01-01 01:17:00.210000+00:00</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<p>Comments:</p>
+<ul>
+<li>the date column is redundant, as the time column already describes all the information</li>
+<li>the place column doesn’t have any relevant information, as we have latitude and longitude for the exact position</li>
+<li>magnitude is a better feature than significance, as it has a clear physical interpretation</li>
+</ul>
+<section id="filtering-the-data" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="filtering-the-data"><span class="header-section-number">2.1</span> Filtering the data</h2>
+<p>The data are generally well structured and there are no missing entries. However, there were some exact duplicates, so we removed them</p>
+<p>We will work only with a portion of data:</p>
+<ul>
+<li>We will consider only earthquake data types and filter out the others</li>
+<li>Very weak earthquakes are rarely associated with tsunamis and are often poorly recorded, therefore removing them reduces noise without affecting tsunami-related signal. Therefore we consider only earthquakes with magnitude greater than 3.</li>
+</ul>
+<div id="8fdcf5b8" class="cell" data-execution_count="100">
+<div class="cell-output cell-output-stdout">
+<pre><code>Data count: 560091</code></pre>
+</div>
+</div>
+<p>After the filtering the important part, we are working now with for about half of a million rows.</p>
+</section>
+</section>
+<section id="exploring-the-data" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Exploring the data</h1>
+<p>We start by quick overview of the distributions of the variables</p>
+<div id="5766ae2c" class="cell" data-execution_count="101">
+<div class="cell-output cell-output-display" data-execution_count="101">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">tsunami</th>
+<th data-quarto-table-cell-role="th">significance</th>
+<th data-quarto-table-cell-role="th">magnitudo</th>
+<th data-quarto-table-cell-role="th">longitude</th>
+<th data-quarto-table-cell-role="th">latitude</th>
+<th data-quarto-table-cell-role="th">depth</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">count</td>
+<td>560091.000000</td>
+<td>560091.000000</td>
+<td>560091.000000</td>
+<td>560091.000000</td>
+<td>560091.000000</td>
+<td>560091.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">mean</td>
+<td>0.002705</td>
+<td>277.625741</td>
+<td>4.182371</td>
+<td>11.418694</td>
+<td>12.365025</td>
+<td>66.891421</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">std</td>
+<td>0.051938</td>
+<td>92.957489</td>
+<td>0.667808</td>
+<td>120.276137</td>
+<td>30.607718</td>
+<td>113.427155</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">min</td>
+<td>0.000000</td>
+<td>138.000000</td>
+<td>3.000000</td>
+<td>-179.999700</td>
+<td>-84.422000</td>
+<td>-3.740000</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">25%</td>
+<td>0.000000</td>
+<td>211.000000</td>
+<td>3.700000</td>
+<td>-92.264750</td>
+<td>-10.954000</td>
+<td>10.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">50%</td>
+<td>0.000000</td>
+<td>284.000000</td>
+<td>4.300000</td>
+<td>22.168000</td>
+<td>15.882000</td>
+<td>33.000000</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">75%</td>
+<td>0.000000</td>
+<td>326.000000</td>
+<td>4.600000</td>
+<td>128.738000</td>
+<td>37.700000</td>
+<td>62.100000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">max</td>
+<td>1.000000</td>
+<td>2910.000000</td>
+<td>9.100000</td>
+<td>180.000000</td>
+<td>87.386000</td>
+<td>735.800000</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<p>From this table, we can derive some initial info about the data like</p>
+<ul>
+<li>confirming the year span</li>
+<li>realizing the low tsunami-rate</li>
+<li>seeing the maximal magnitude of the earthquake</li>
+</ul>
+<p>Now we will look more precisely on the variables individually.</p>
+<p>We plot some basic graphs, that can help us to understand the data. Firstly, we plot the magnitude distribution over the data.</p>
+<div id="73836637" class="cell" data-execution_count="103">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="earthquakes_files/figure-html/cell-19-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>It is rather logical, that the higher magnitude earthquakes happens less often then the lower ones. It is worth noting, that the graph is logaritmic de facto on both axis, as the magnitude, measured by moment magnitude scale (similar to Richter’s scale), is by definition a logarithmic quantity.</p>
+<p>Other useful graph is the depth distribution</p>
+<div id="fc5b3021" class="cell" data-execution_count="104">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="earthquakes_files/figure-html/cell-20-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This graph shows, that mostly the earthquake epicenters are captured on the surface, but then the counts are about the same between 200-600kms below the surface.</p>
+<p>It will be also useful to plot the frequency of earthquakes over time</p>
+<div id="2ecf716a" class="cell" data-execution_count="105">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="earthquakes_files/figure-html/cell-21-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>It is possible, that the rise between years 1990-2005 is caused by the fact, that some sensors were added only in later times to the data. Also, there are probably some data not yet collected from last year 2023. What is strange is the sharp decrease in year 2009, which could be caused by not collecting some data that year, but this is only a guess.</p>
+<p>Now we look at top 10 states with the most frequent earthquakes:</p>
+<div id="e93ba167" class="cell" data-execution_count="106">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="earthquakes_files/figure-html/cell-22-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>It makes sense that islands and coastal states are the ones with the most frequent earthquakes, with Indonesia being the leading one (but the USA is divided into its states, otherwise it would be at first place) We will in fact show, that the most earthquakes occur in the places close to the tectonic plate boundaries. The map of these tectonic plates is here:</p>
+<div id="c4e57380" class="cell" data-execution_count="107">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="earthquakes_files/figure-html/cell-23-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>source: https://en.wikipedia.org/wiki/Plate_tectonics#/media/File:Tectonic_plates_(2022).svg</p>
+<p>And now we plot the distribution of earthquakes, with the ones causing the tsunami highlighted by red dots:</p>
+<div id="cb1ab25d" class="cell" data-execution_count="108">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="earthquakes_files/figure-html/cell-24-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>and we can see that it strongly corresponds to the tectonic plate boundaries.</p>
+</section>
+<section id="tsunami-analysis" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Tsunami analysis</h1>
+<p>In this section, we will explore relation between the tsunamis and the other variables, and try to deduce some dependencies. Firstly, we plot the most striked states by tsunami:</p>
+<div id="1512dfc6" class="cell" data-execution_count="109">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="earthquakes_files/figure-html/cell-25-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>It can be seen, that Alaska is by far the most striked region and will be interesting subject for further analysis</p>
+<p>Now we plot the correlation matrix between chosen variables. For it to make sense, we need to look only on states where tsunami can occur, so we have chosen those where there were at least 5 tsunamis recorded. From now on, we will work only with these states and call them “coastal states”.</p>
+<p>Now we plot the distribution of tsunamis over time</p>
+<div id="9ea1402e" class="cell" data-execution_count="110">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="earthquakes_files/figure-html/cell-26-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The most important thing here is to realize that unlike the earthquakes, the tsunamis were recorded only from year 2013 on, likely reflecting changes in data collection rather than physical absence before that date. Therefore, we will from now on use only time period 2013-2023</p>
+<div id="7edb48cd" class="cell" data-execution_count="111">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="earthquakes_files/figure-html/cell-27-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Even though we don’t know exactly what the significance is, we can see it is mostly just scaled magnitude, as there is a very strong correlation between them. What is somewhat interesting is, that there is only a low correlation between tsunami and magnitude. This however can be caused by the fact, that the dependency can be non-linear. In fact we plot this dependency:</p>
+<div id="db307c06" class="cell" data-execution_count="112">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="earthquakes_files/figure-html/cell-28-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>From this graph it is clear, that there percentage of tsunami when there is a earthquake of a higher magnitude. For clarity we plot the probability, where we exactly see the concrete percentage</p>
+<div id="69410c89" class="cell" data-execution_count="113">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="earthquakes_files/figure-html/cell-29-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This is actually one huge result, considering the mean probability of tsunami for coastal states is</p>
+<div id="baa81e24" class="cell" data-execution_count="114">
+<div class="cell-output cell-output-stdout">
+<pre><code>0.01057</code></pre>
+</div>
+</div>
+<p>And here we see that high magnitudes have much higher probability.</p>
+<p>We try to do the same for depth instead of magnitude.</p>
+<div id="4bf8b29b" class="cell" data-execution_count="115">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="earthquakes_files/figure-html/cell-31-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>There is no clear linear dependency of tsunami on depth, but there can be some non-linear dependency.</p>
+</section>
+<section id="tsunami-prediction" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Tsunami prediction</h1>
+<p>In this section, we will consider only earthquakes in Alaska from year 2013 on and we will try to predict if the earthquake will cause a tsunami. It is important to note, that we had to restrict to some concrete region for the better performance of the model, if we would be interested in some other region, the model should be trained on the corresponding data. It is not suitable to train the model globally, as it will likely give worse results, due to even worse class separability of data.</p>
+<section id="theory-of-hypotheses-testing-recap" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="theory-of-hypotheses-testing-recap"><span class="header-section-number">5.1</span> Theory of hypotheses testing recap</h2>
+<p>A <strong>confusion matrix</strong> is a compact table that summarizes a classifier’s predictions against the true labels. One axis corresponds to the predicted class and the other to the actual class. From this table we obtain four fundamental quantities: <strong>True Positives (TP)</strong>, cases where the model predicts the positive class and the event truly occurs; <strong>True Negatives (TN)</strong>, cases where the model correctly predicts the negative class; <strong>False Positives (FP)</strong>, cases where the model predicts a positive event that does not actually occur (false alarms); and <strong>False Negatives (FN)</strong>, cases where the model predicts no event although the event truly occurs (missed events).</p>
+<p>Two key performance measures derived from the confusion matrix are <strong>precision</strong> and <strong>recall</strong>. <strong>Precision</strong> is defined as</p>
+<p><span class="math display">\[\text{Precision} = \frac{TP}{TP + FP},\]</span> and measures the reliability of positive predictions, i.e.&nbsp;the fraction of predicted positives that are correct. <strong>Recall</strong> is defined as</p>
+<p><span class="math display">\[\text{Recall} = \frac{TP}{TP + FN},\]</span></p>
+<p>and measures the ability of the model to detect positive events, i.e.&nbsp;the fraction of all true positives that are successfully identified.</p>
+<p><strong>Accuracy</strong> is defined as</p>
+<p><span class="math display">\[
+\text{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN},
+\]</span></p>
+<p>and represents the overall fraction of correctly classified instances. While accuracy is intuitive, it can be misleading in highly imbalanced problems, as high accuracy may be achieved by always predicting the majority class.</p>
+<p>In safety-critical and strongly imbalanced problems such as tsunami prediction, recall is often prioritized because false negatives correspond to missed hazardous events, while precision is used to assess the rate of false alarms. Accuracy is therefore reported only as a supplementary metric.</p>
+</section>
+<section id="application-to-our-example" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="application-to-our-example"><span class="header-section-number">5.2</span> Application to our example</h2>
+<p>As it was said, tsunami is rather a catastrophic event, so selecting model based on accuracy would be misleading (looking at mean rate of tsunamis at this area, even a simple model that predicts no-tsunami could achieve almost 97% accuracy), but rather we will evaluate the model based on other criteria, mostly on the recall and the precision recall curve. We will postulate, that we will try to achieve a recall approximately 0.9 to catch most tsunamis. (In reality, we would want to be much more precise, but we would also have much better tools and sensors to achieve that, so here in academics we will stick to this postulated recall and postulate it is our dream target.)</p>
+<div id="7aba9c1a" class="cell" data-execution_count="117">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ MODELS FOR REGION: Alaska 
+Samples in region: 21921
+Tsunami rate: 0.03165913963779025</code></pre>
+</div>
+</div>
+<p>Now, we make one strong (and not completely correct) assumption, that the data do not depend on time that much and when training our model, we will not use the date of the earthquake as a factor. The reason for this assumption is, that we would like our model to give predictions in next years, but as we cannot have train data from the future, the model would have to do an extrapolation, and results of that are very uncertain. Also, the tectonic plates move in order of centimeters per year, so we say that our assumption is at least somewhat reasonable.</p>
+<p>Our used features, are latitude, longitude, depth and magnitude. We will split the data, use 20% as a test set and 20% as a validation set</p>
+<p>We will use following models:</p>
+<ul>
+<li>simple model that will predict that the tsunami occurs every time, when magnitude of the earthquake is bigger than certain threshold this model will be used mostly as a certain baseline, that should be beaten by other models</li>
+<li>logistic regression model</li>
+<li>neural network model with two layers of neurons</li>
+</ul>
+<p>All the models will be implemented with module Scikit-learn</p>
+<p>We validate our models on a validation set and plot the roc curve and the precision-recall curve for each model. However, as it will be seen, the precision recall-curve is much better criteria here, as for the rare events, the roc curve is too optimistic, given a very high count of true negatives. Therefore, the precision recall curve will be our main criteria. However, we print also the other criteria for completeness.</p>
+<p>The decision threshold τ was selected on the validation set as the highest threshold that achieves the target recall, ensuring conservative but actionable tsunami detection.</p>
+<p>Explanation:</p>
+<ul>
+<li>AUC: area under the curve this is a good metrics for evaluation of the model</li>
+<li>AP: average precision</li>
+</ul>
+<p>Also it is worth mentioning, that Scikit-learn reports confusion matrices with rows corresponding to true labels and columns to predicted labels, resulting in the layout [[TN, FP], [FN, TP]] for binary classification.</p>
+<div id="1968566e" class="cell" data-execution_count="122">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ Validation results magnitude_simple
+ROC AUC: 0.9497
+PR AUC: 0.4432
+Chosen magnitude threshold for recall &gt;= 0.9: 4.00000
+Recall at this threshold: 0.950
+Precision at this threshold: 0.151
+Accuracy at this threshold: 0.8296
+
+Confusion matrix at this threshold
+[[3505  740]
+ [   7  132]]</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="earthquakes_files/figure-html/cell-38-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="earthquakes_files/figure-html/cell-38-output-3.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="5c19d713" class="cell" data-execution_count="123">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ Validation results lr
+ROC AUC: 0.9766
+PR AUC: 0.5619
+Chosen tau (val) for recall &gt;= 0.9: 0.61714
+Recall at tau: 0.906
+Precision at tau: 0.289
+Accuracy at tau: 0.9263
+
+Confusion matrix at tau:
+[[3935  310]
+ [  13  126]]</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="earthquakes_files/figure-html/cell-39-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="earthquakes_files/figure-html/cell-39-output-3.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="d085aa8c" class="cell" data-execution_count="124">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ Validation results mlp
+ROC AUC: 0.9861
+PR AUC: 0.7165
+Chosen tau (val) for recall &gt;= 0.9: 0.82517
+Recall at tau: 0.906
+Precision at tau: 0.455
+Accuracy at tau: 0.9626
+
+Confusion matrix at tau:
+[[4094  151]
+ [  13  126]]</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="earthquakes_files/figure-html/cell-40-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="earthquakes_files/figure-html/cell-40-output-3.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Looking at the precision-recall curves, the mlp seems to be the best model, also the confusion matrices are rather optimistic (Quite low number of false negatives = not detected tsunamis, which is bottom left in scikit-learn confusion matrix)</p>
+</section>
+</section>
+<section id="evaluation" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> Evaluation</h1>
+<p>Now we evaluate our models, with already chosen threshold, on test data and choose the best model. This step is important, as we need to see, how does the model with fixed threshold (chosen on validation data) behave on unseen data.</p>
+<div id="9022593b" class="cell" data-execution_count="128">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+=== Test results: magnitude_simple ===
+Magnitude threshold: 4.0
+Recall:    0.935251798561151
+Precision: 0.15513126491646778
+F1:        0.2661207778915046
+accuracy:  0.8364880273660206
+TN=3538, FP=708, FN=9, TP=130
+
+=== Test results: lr ===
+Threshold τ: 0.6171417833994436
+Recall:    0.9064748201438849
+Precision: 0.2896551724137931
+F1:        0.43902439024390244
+accuracy:  0.9265678449258837
+TN=3937, FP=309, FN=13, TP=126
+
+=== Test results: mlp ===
+Threshold τ: 0.8251733483206732
+Recall:    0.8920863309352518
+Precision: 0.4806201550387597
+F1:        0.6246851385390428
+accuracy:  0.9660205245153934
+TN=4112, FP=134, FN=15, TP=124</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="earthquakes_files/figure-html/cell-44-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="earthquakes_files/figure-html/cell-44-output-3.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="earthquakes_files/figure-html/cell-44-output-4.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="earthquakes_files/figure-html/cell-44-output-5.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="earthquakes_files/figure-html/cell-44-output-6.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="earthquakes_files/figure-html/cell-44-output-7.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="discussion-of-evaluation-results" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="discussion-of-evaluation-results"><span class="header-section-number">6.1</span> Discussion of evaluation results</h2>
+<p>The evaluation results highlight the challenges of tsunami prediction as a strongly imbalanced classification problem. Across all considered models, high recall can be achieved only at the expense of reduced precision, reflecting the rarity of tsunami events relative to non-tsunami earthquakes. This trade-off is expected in safety-critical settings, where missing a true event (false negative) is typically considered more severe than issuing a false alarm.</p>
+<p>The magnitude-based baseline provides a useful point of reference. Its selected threshold corresponds closely to the smallest earthquake magnitude associated with a tsunami in the validation data, resulting in a stable and interpretable decision rule. However, this simplicity also limits its discriminative power: while recall targets can be satisfied, precision remains low because magnitude alone does not capture key physical factors such as focal mechanism, rupture geometry, or bathymetry.</p>
+<p>Compared to the baseline, the logistic regression and MLP models achieve improved precision at comparable recall levels, indicating that combining magnitude with depth and spatial information adds predictive value. The MLP in particular benefits from its ability to model nonlinear interactions between features, though the improvement remains moderate due to the limited feature set and the absence of direct physical tsunami-generation indicators. Concretely, mlp model is able to predict cca 90% of tsunamis, while predicting only for about a half false alarms.</p>
+<p>Area under the ROC curve remains relatively high for all models, but this metric is less informative in the present context due to extreme class imbalance. Precision–recall–based evaluation provides a more realistic assessment of operational performance, as it directly reflects the false-alarm rate at the recall levels required for early warning systems. Reporting confusion matrices at the selected operating threshold further clarifies the absolute number of missed events and false alarms, which is essential for practical interpretation.</p>
+<p>Overall, the results demonstrate that while simple and machine-learning-based models can achieve high detection rates, reliable tsunami prediction remains fundamentally constrained by limited input information. The evaluation therefore emphasizes the importance of careful threshold selection, domain-informed metrics, and transparent reporting of trade-offs rather than raw accuracy.</p>
+</section>
+</section>
+<section id="conclusion" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> Conclusion</h1>
+<p>In this project, we analyzed a large global earthquake dataset spanning the years 1990–2023, with a particular focus on the occurrence of tsunami events and their relationship to fundamental seismic characteristics. We explored spatial properties of earthquakes, identifying regional patterns and highlighting areas with elevated activity, which correspond to the boundary of the tectonic plates.</p>
+<p>We formulated tsunami occurrence as a binary classification problem and trained multiple predictive models using seismic features available at the time of an earthquake, namely magnitude, depth, latitude, and longitude. To account for the strong class imbalance inherent in tsunami data, we employed class weighting and probability-based evaluation rather than relying on accuracy alone. Model performance was assessed using mostly precision-recall ratio, as this metrics can reflect the ability to correctly identify rare but high-impact tsunami events.</p>
+<p>Our results indicate that more complex models such as multilayer perceptrons can achieve quite strong overall discrimination performance, beating linear logistic regression model and the simple only-magnitude-based model.</p>
+<p>A key limitation of this study is the reliance solely on earthquake parameters, without incorporating oceanographic or fault-mechanism information, which are known to play a critical role in tsunami generation.</p>
+<p>Overall, this project highlights the importance of careful metric selection, threshold optimization, and region-aware modeling when addressing rare-event prediction problems in geophysical data. While the models developed here are not intended to replace physical tsunami warning systems, they provide a valuable data-driven perspective and demonstrate how machine learning can complement traditional approaches by offering probabilistic assessments based on readily available earthquake parameters.</p>
+<section id="future-work" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="future-work"><span class="header-section-number">7.1</span> Future work</h2>
+<p>There are lot of things that this report does not touch, for example:</p>
+<ol type="1">
+<li><strong>Time-aware validation</strong>: use a time-forward split (train on earlier years, validate/test on later years) to measure true deployment generalization and compare with our models.</li>
+<li><strong>Uncertainty quantification and calibration</strong>: Produce confidence intervals for the predicted probability of tsunamis, which is essential for decision-making.<br>
+</li>
+<li><strong>Operational metrics</strong>: report false alarms per year and simulate downstream costs to select thresholds based on decision-theoretic criteria.</li>
+</ol>
+<p>These things can be done in the future to improve our project further.</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
